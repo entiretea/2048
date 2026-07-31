@@ -278,6 +278,7 @@
     }
     // remove stale tile elements
     [...tilesEl.children].forEach(el => {
+      if (el.classList.contains('dying')) return;
       const id = parseInt(el.id.replace('tile-', ''), 10);
       if (!seen.has(id)) el.remove();
     });
@@ -332,6 +333,7 @@
             const el = document.getElementById('tile-' + t.id);
             if (el) {
               const pos = cellPos(tr, tc);
+              el.classList.add('dying');
               el.style.transform = `translate(${pos.x}px, ${pos.y}px)`;
               el.style.zIndex = 1;
               setTimeout(() => el.remove(), 120);
@@ -351,15 +353,10 @@
     }
 
     if (moved) {
-      render();
-      // add new tile after slide animation
-      setTimeout(() => {
-        addRandom();
-        updateScore();
-        render();
-        checkEnd();
-      }, 120);
+      addRandom();
       updateScore();
+      render();
+      checkEnd();
     }
   }
 
