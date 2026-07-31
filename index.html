@@ -157,6 +157,15 @@
   .overlay.show { display: flex; }
   .overlay h2 { font-size: 42px; font-weight: 800; }
   .overlay.win h2 { color: var(--accent); }
+  .overlay-btns { display: flex; gap: 10px; }
+  .btn-primary {
+    background: var(--accent);
+    color: #1a1207;
+  }
+  .btn-primary:hover { background: #f6c093; }
+  /* Keep Going only makes sense after a win */
+  #keep { display: none; }
+  .overlay.win #keep { display: inline-block; }
   footer { margin-top: 16px; text-align: center; color: var(--muted); font-size: 13px; }
 </style>
 </head>
@@ -178,7 +187,10 @@
       <div class="tiles" id="tiles"></div>
       <div class="overlay" id="overlay">
         <h2 id="overlay-msg">Game Over</h2>
-        <button class="new" id="retry">Try Again</button>
+        <div class="overlay-btns">
+          <button class="new btn-primary" id="keep">Keep Going</button>
+          <button class="new" id="retry">Try Again</button>
+        </div>
       </div>
     </div>
     <footer>Arrow keys / WASD / swipe to move</footer>
@@ -363,6 +375,7 @@
       overlay.classList.add('show');
       overlay.classList.remove('win');
       overlayMsg.textContent = 'Game Over';
+      document.getElementById('retry').textContent = 'Try Again';
     }
     return true;
   }
@@ -448,10 +461,11 @@
   }
 
   function checkEnd() {
-    if (won) {
+    if (won === true) {
       over = false;
       overlay.classList.add('show', 'win');
       overlayMsg.textContent = 'You Win! 🎉';
+      document.getElementById('retry').textContent = 'New Game';
       won = 'shown';
       return;
     }
@@ -460,6 +474,7 @@
       overlay.classList.add('show');
       overlay.classList.remove('win');
       overlayMsg.textContent = 'Game Over';
+      document.getElementById('retry').textContent = 'Try Again';
     }
   }
 
@@ -494,6 +509,10 @@
 
   document.getElementById('new').addEventListener('click', newGame);
   document.getElementById('retry').addEventListener('click', newGame);
+  document.getElementById('keep').addEventListener('click', () => {
+    overlay.classList.remove('show', 'win');
+    saveState();
+  });
   window.addEventListener('resize', layout);
 
   buildGrid();
